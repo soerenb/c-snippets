@@ -1,0 +1,88 @@
+# ******************************************************************************  
+# Generic Makefile to inlcude in project Makefile.
+# ****************************************************************************** 
+
+# Set compiler to some standard values if not set
+CC ?= gcc
+CXX ?= g++
+AS ?= gcc
+AR ?= ar
+OBJDUMP ?= objdump
+OBJCOPY ?= objcopy
+SIZE ?= size
+LDFLAGS ?= ${CFLAGS}
+
+# Determine if project is written in c or c++ by looking at the suffix of the
+# main source file
+ifeq ($(suffix $(word 1, ${SOURCES})),.cpp)
+   LD ?= g++
+else
+   LD ?= gcc
+endif
+
+# Filename for linker map file
+LD_MAP=linker.map
+
+OBJECTS = $(addsuffix .o, $(basename ${SOURCES}))
+TARGET_ELF = $(addsuffix .elf, $(word 1, $(basename ${SOURCES})))
+TARGET_BIN = $(addsuffix .bin, $(word 1, $(basename ${SOURCES})))
+
+.PHONY: clean war love
+
+all: ${TARGET_ELF} ${EXT_TARGS}
+
+debug: CXXFLAGS+=-g -p -v
+debug: CFLAGS+=-g -p -v
+debug: LDFLAGS+=-g -v -Wl,-Map,${LD_MAP}
+debug: ${TARGET_ELF}
+
+verbose: CXXFLAGS+=-DVERBOSE
+verbose: CFLAGS+=-DVERBOSE
+verbose: ${TARGET_ELF}
+
+ifdef MAKEVERBOSE
+quiet =
+Q =
+else
+quiet = quiet_
+Q = @
+endif
+cc_c_o = "${CC} -c ${CFLAGS} ${SYMBOLS} -o $@ $<"
+quiet_cc_c_o = "CC $@"
+cc_S_o = "${CC} -c ${ASFLAGS} ${SYMBOLS} -o $@ $<"
+cc_s_o = "${CC} -c ${ASFLAGS} -o $@ $<"
+quiet_cc_s_o = "AS $@"
+quiet_cc_S_o = ${quiet_cc_s_o}
+cxx_cpp_o = "${CXX} -c ${CXXFLAGS} ${SYMBOLS} -o $@ $<"
+quiet_cxx_cpp_o = "CXX $@"
+ld_o_elf = "${LD} ${LDFLAGS} -o $@ $(OBJECTS) ${LDLIBS}"
+quiet_ld_o_elf = "LD $@"
+
+%.o: %.S
+	@echo "$(${quiet}cc_S_o)"
+	@${CC} -c ${ASFLAGS} ${SYMBOLS} -o $@ $<
+
+%.o: %.s
+	@echo "making $@ from $<"
+	@${CC} -c ${ASLAGS} -o $@ $<
+
+%.o: %.c
+	@echo "$(${quiet}cc_c_o)"
+	@${CC} -c ${CFLAGS} ${SYMBOLS} -o $@ $<
+
+%.o: %.cpp
+	@echo "$(${quiet}cxx_cpp_o)"
+	@${CXX} -c ${CXXFLAGS} ${SYMBOLS} -o $@ $<
+
+%.elf: %.o ${OBJECTS}
+	@echo "$(${quiet}ld_o_elf)"
+	@${LD} ${LDFLAGS} -o $@ $(OBJECTS) ${LDLIBS}
+
+clean:
+	rm -f *.o *~ *.bin linker.map *.out dump *.elf ${EXT_TARGS} ${EXT_CLEAN}
+
+war:
+	@echo "No! Make love not war!"
+
+love:
+	@echo "Sorry, I'm just a dumb machine"
