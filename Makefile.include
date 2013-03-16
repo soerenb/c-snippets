@@ -31,9 +31,9 @@ TARGET_BIN = $(addsuffix .bin, $(word 1, $(basename ${SOURCES})))
 
 all: ${TARGET_ELF} ${EXT_TARGS}
 
-debug: CXXFLAGS+=-g -p -v
-debug: CFLAGS+=-g -p -v
-debug: LDFLAGS+=-g -v -Wl,-Map,${LD_MAP}
+debug: CXXFLAGS += -O0 -g -p
+debug: CFLAGS += -O0 -g -p
+debug: LDFLAGS += -g -Wl,-Map,${LD_MAP}
 debug: ${TARGET_ELF}
 
 verbose: CXXFLAGS+=-DVERBOSE
@@ -41,11 +41,11 @@ verbose: CFLAGS+=-DVERBOSE
 verbose: ${TARGET_ELF}
 
 ifdef MAKEVERBOSE
-quiet =
-Q =
+   quiet =
+   Q =
 else
-quiet = quiet_
-Q = @
+   quiet = quiet_
+   Q = @
 endif
 cc_c_o = "${CC} -c ${CFLAGS} ${SYMBOLS} -o $@ $<"
 quiet_cc_c_o = "CC $@"
