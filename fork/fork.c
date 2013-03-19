@@ -23,8 +23,8 @@
 static int parent(int *pipefd, int cpid)
 {
 	char *input;
-	unsigned int txBuf;
-	
+	unsigned int tx_buf;
+
 	close(pipefd[0]);
 	while (1) {
 		printf("> ");
@@ -40,25 +40,24 @@ static int parent(int *pipefd, int cpid)
 			return 0;
 		}
 		errno = 0;
-		txBuf = strtol(input, NULL, 0);
+		tx_buf = strtol(input, NULL, 0);
 		if (errno == ERANGE)
-			printf("WARNING: Over-/Underflow in string conversion\
-					to int.\n");
+			printf("WARNING: strtol conversion out of range.\n");
 		free(input);
-		if (write(pipefd[1], &txBuf, 4) != 4)
+		if (write(pipefd[1], &tx_buf, 4) != 4)
 			printf("WARNING: Not all data was written.\n");
 	}
 }
 
 static void child(int *pipefd)
 {
-	unsigned int rxBuf;
-	
+	unsigned int rx_buf;
+
 	close(pipefd[1]);
 	while (1) {
-		if (read(pipefd[0], &rxBuf, 4) != 4)
+		if (read(pipefd[0], &rx_buf, 4) != 4)
 			printf("WARNING: Unexpected lengh in read data.\n");
-		printf("%#8.8x\n", rxBuf);
+		printf("%#8.8x\n", rx_buf);
 	}
 }
 

@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 		case 10:
 			printf("i == 10\n");
 		default:
-			;
+			break;
 		}
 	}
 

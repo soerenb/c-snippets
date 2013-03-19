@@ -21,8 +21,8 @@
 static const int THREADC = 10;
 
 /* Global vars */
-static unsigned int counter = 0;
-static unsigned int counter2 = 0;
+static unsigned int counter;
+static unsigned int counter2;
 
 /* Mutex */
 static pthread_mutex_t mutex_counter;
@@ -43,10 +43,10 @@ static void *thread(void *arg)
 }
 
 /* Second thread version manipulating both counters using mutex */
-static void *threadSafe(void *arg)
+static void *thread_safe(void *arg)
 {
 #ifdef VERBOSE
-	unsigned int id = *((unsigned int*)arg);
+	unsigned int id = *((unsigned int *)arg);
 	printf("Hello from thread %u! Counter: %u\n", id, counter);
 #endif
 
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 	pthread_attr_t attr[THREADC];
 	int tret;
 	unsigned int id[THREADC];
-	unsigned int refCounter = 0;
+	unsigned int ref_counter = 0;
 
 	pthread_mutex_init(&mutex_counter, NULL);
 
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 
 	/* Join previously with spawned threads */
 	for (i = 0; i < THREADC; i++) {
-		refCounter += i;  /* referece value to compare counter 2 with */
+		ref_counter += i; /* referece value to compare counter 2 with */
 		pthread_join(threads[i], NULL);	/* actual joining */
 	}
 
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 	printf("Multithreaded w/o mutex:\n");
 	printf("Counter:    %u\n", counter);
 	printf("Counter2:   %u\n", counter2);
-	printf("refCounter: %u\n", refCounter);
+	printf("ref_counter: %u\n", ref_counter);
 	printf("THREADC:    %u\n", THREADC);
 
 	/* Reset counter */
@@ -108,8 +108,8 @@ int main(int argc, char **argv)
 
 	/* Spawn safe threads */
 	for (i = 0; i < THREADC; i++)
-		tret = pthread_create(&threads[i], &attr[i], &threadSafe,
-				(void*)(&id[i]));
+		tret = pthread_create(&threads[i], &attr[i], &thread_safe,
+				(void *)(&id[i]));
 		if (tret)
 			printf("error %d while spawning thread\n", tret);
 
@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 	printf("Multithreaded w/ mutex:\n");
 	printf("Counter:    %u\n", counter);
 	printf("Counter2:   %u\n", counter2);
-	printf("refCounter: %u\n", refCounter);
+	printf("ref_counter: %u\n", ref_counter);
 	printf("THREADC:    %u\n", THREADC);
 
 	return 0;

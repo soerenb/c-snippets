@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
 	printf("Enter upper bound for search (%u): ", upperbound);
 	rline = foo_gets();
-	if (rline ==NULL) {
+	if (!rline) {
 		printf("ERROR: Error reading from stdin");
 	} else {
 		if (strcmp(rline, "\n"))

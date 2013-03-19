@@ -23,13 +23,13 @@ union foo {
 
 int main(int argc, char **argv)
 {
-	union foo myUnion;
+	union foo my_union;
 
-	myUnion.int32 = 0xdeadbeef;
+	my_union.int32 = 0xdeadbeef;
 
-	printf("int32: %#x\n", myUnion.int32);
-	printf("int16: %#x\n", myUnion.int16);
-	printf("int8 : %#x\n", myUnion.int8);
+	printf("int32: %#x\n", my_union.int32);
+	printf("int16: %#x\n", my_union.int16);
+	printf("int8 : %#x\n", my_union.int8);
 
 	return 0;
 }
