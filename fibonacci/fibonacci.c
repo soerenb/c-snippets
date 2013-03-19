@@ -75,10 +75,9 @@ int main(int argc, char *argv[])
 		printf("Enter the number of elements to calculate (%u): ",
 				(unsigned int)limit);
 		buf = foo_gets();
-		if ((buf != NULL) && strcmp(buf, "\n")) {
+		if ((buf != NULL) && strcmp(buf, "\n"))
 			limit = strtol(buf, NULL, 0);
-			free(buf);
-		}
+		free(buf);
 	}
 	if (limit < 2)
 		limit = 2;
