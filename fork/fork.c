@@ -34,6 +34,7 @@ static int parent(int *pipefd, int cpid)
 			return -1;
 		}
 		if (!strcmp(input, "exit\n")) {
+			free(input);
 			close(pipefd[1]);
 			kill(cpid, SIGKILL);
 			return 0;
