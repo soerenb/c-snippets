@@ -1,0 +1,6 @@
+cmake_minimum_required (VERSION 2.6)
+project (CMake_Hello_World)
+include_directories(include)
+add_library(external STATIC src/external/external.c)
+add_executable(hello src/main/hello.c)
+target_link_libraries(hello external)
