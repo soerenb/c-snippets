@@ -40,7 +40,7 @@ verbose: CXXFLAGS+=-DVERBOSE
 verbose: CFLAGS+=-DVERBOSE
 verbose: ${TARGET_ELF}
 
-ifdef MAKEVERBOSE
+ifdef V
    quiet =
    Q =
 else
