@@ -47,36 +47,37 @@ else
    quiet = quiet_
    Q = @
 endif
-cc_c_o = "${CC} -c ${CFLAGS} ${SYMBOLS} -o $@ $<"
-quiet_cc_c_o = "CC $@"
-cc_S_o = "${CC} -c ${ASFLAGS} ${SYMBOLS} -o $@ $<"
-cc_s_o = "${CC} -c ${ASFLAGS} -o $@ $<"
-quiet_cc_s_o = "AS $@"
+
+cc_c_o = ${CC} -c ${CFLAGS} ${SYMBOLS} -o $@ $<
+quiet_cc_c_o = CC $@
+cc_S_o = ${CC} -c ${ASFLAGS} ${SYMBOLS} -o $@ $<
+cc_s_o = ${CC} -c ${ASFLAGS} -o $@ $<
+quiet_cc_s_o = AS $@
 quiet_cc_S_o = ${quiet_cc_s_o}
-cxx_cpp_o = "${CXX} -c ${CXXFLAGS} ${SYMBOLS} -o $@ $<"
-quiet_cxx_cpp_o = "CXX $@"
-ld_o_elf = "${LD} ${LDFLAGS} -o $@ $(OBJECTS) ${LDLIBS}"
-quiet_ld_o_elf = "LD $@"
+cxx_cpp_o = ${CXX} -c ${CXXFLAGS} ${SYMBOLS} -o $@ $<
+quiet_cxx_cpp_o = CXX $@
+ld_o_elf = ${LD} ${LDFLAGS} -o $@ $(OBJECTS) ${LDLIBS}
+quiet_ld_o_elf = LD $@
 
 %.o: %.S
 	@echo "$(${quiet}cc_S_o)"
-	@${CC} -c ${ASFLAGS} ${SYMBOLS} -o $@ $<
+	@${call cc_S_o}
 
 %.o: %.s
-	@echo "making $@ from $<"
-	@${CC} -c ${ASLAGS} -o $@ $<
+	@echo "$(${quiet}cc_s_o)"
+	@${call cc_s_o}
 
 %.o: %.c
 	@echo "$(${quiet}cc_c_o)"
-	@${CC} -c ${CFLAGS} ${SYMBOLS} -o $@ $<
+	@${call cc_c_o}
 
 %.o: %.cpp
 	@echo "$(${quiet}cxx_cpp_o)"
-	@${CXX} -c ${CXXFLAGS} ${SYMBOLS} -o $@ $<
+	@${call cxx_cpp_o}
 
 %.elf: %.o ${OBJECTS}
 	@echo "$(${quiet}ld_o_elf)"
-	@${LD} ${LDFLAGS} -o $@ $(OBJECTS) ${LDLIBS}
+	@${call ld_o_elf}
 
 clean:
 	rm -f *.o *~ *.bin linker.map *.out dump *.elf ${EXT_TARGS} ${EXT_CLEAN}
