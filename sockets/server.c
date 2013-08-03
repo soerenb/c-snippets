@@ -76,7 +76,8 @@ int main(void)
 	signal(SIGPIPE, SIG_IGN);
 
 	/* create socket */
-	if ((socket_fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
+	socket_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+	if (socket_fd < 0) {
 		perror("ERROR: unable to create socket\n");
 		return socket_fd;
 	}

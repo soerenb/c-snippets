@@ -34,7 +34,8 @@ int main(void)
 	char *buf;
 	size_t buf_size;
 
-	if ((socket_fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
+	socket_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+	if (socket_fd < 0) {
 		perror("ERROR: unable to create socket");
 		return socket_fd;
 	}
