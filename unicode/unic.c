@@ -47,6 +47,6 @@ int main(int argc, char *argv[])
 
 	if (fclose(fout))
 		printf("WARNING: Error while closing output file.\n");
-	
+
 	return 0;
 }
