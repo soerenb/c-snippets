@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	struct termios tcattr;
 
 	/* the spacing of the ellipsis matters if you want to look like DOS */
-	printf("Press any key to continue . . . \n");
+	printf("Press any key to continue . . .\n");
 	tcgetattr(0, &tcattr);
 
 	/* disable 'Canonical mode' which assumes you want line-buffering */
