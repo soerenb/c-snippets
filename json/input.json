@@ -1,0 +1,36 @@
+{
+	"name": "Geo-Trivia",
+	"location": [
+		{
+			"name": "New Zealand",
+			"question": [
+				{
+					"question": "What is the native's name for 'New Zealand'?",
+					"answer": ["New Zealand",
+						   "Aotearoa",
+						   "Shire"],
+					"correct_answer": 2
+				},
+				{
+					"question": "What is the name of New Zealand's capital city" ,
+					"answer": ["Wellington",
+						   "Christchurch",
+						   "Auckland"],
+					"correct_answer": 1
+				}
+			]
+		},
+		{
+			"name": "China",
+			"question": [
+				{
+					"question": "What is the name of China's capital city" ,
+					"answer": ["Tianjin",
+						   "Shanghai",
+						   "Beijing"],
+					"correct_answer": 3
+				}
+			]
+		}
+	]
+}
