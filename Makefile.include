@@ -11,6 +11,8 @@ OBJDUMP ?= objdump
 OBJCOPY ?= objcopy
 SIZE ?= size
 LDFLAGS ?= ${CFLAGS}
+CFLAGS += -D_FORTIFY_SOURCE=2
+CXXFLAGS += -D_FORTIFY_SOURCE=2
 
 # Determine if project is written in c or c++ by looking at the suffix of the
 # main source file
@@ -31,8 +33,8 @@ TARGET_BIN = $(addsuffix .bin, $(word 1, $(basename ${SOURCES})))
 
 all: ${TARGET_ELF} ${EXT_TARGS}
 
-debug: CXXFLAGS += -O0 -g -p
-debug: CFLAGS += -O0 -g -p
+debug: CXXFLAGS += -O0 -g -p -U_FORTIFY_SOURCE
+debug: CFLAGS += -O0 -g -p -U_FORTIFY_SOURCE
 debug: LDFLAGS += -g -Wl,-Map,${LD_MAP}
 debug: ${TARGET_ELF}
 
