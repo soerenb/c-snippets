@@ -42,6 +42,10 @@ verbose: CXXFLAGS+=-DVERBOSE
 verbose: CFLAGS+=-DVERBOSE
 verbose: ${TARGET_ELF}
 
+coverage: CFLAGS+=-fprofile-arcs -ftest-coverage
+coverage: CXXFLAGS+=-fprofile-arcs -ftest-coverage
+coverage: ${TARGET_ELF}
+
 ifdef V
    quiet =
    Q =
@@ -82,7 +86,7 @@ quiet_ld_o_elf = LD $@
 	@${call ld_o_elf}
 
 clean:
-	rm -f *.o *~ *.bin linker.map *.out dump *.elf ${EXT_TARGS} ${EXT_CLEAN}
+	rm -f *.o *~ *.bin linker.map *.out dump *.elf *.gcov *.gcno *.gcda ${EXT_TARGS} ${EXT_CLEAN}
 
 war:
 	@echo "No! Make love not war!"
