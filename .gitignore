@@ -1,0 +1,9 @@
+*~
+*.[oa]
+*.bin
+linker.map
+*.out
+*.elf
+*.gcov
+*.gcno
+*.gcda
