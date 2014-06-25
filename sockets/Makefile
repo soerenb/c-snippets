@@ -8,8 +8,6 @@ LDFLAGS  = ${CFLAGS}
 MKFLAGS = --no-print-directory
 LDLIBS =
 
-SOURCES = server.c
-
 all:
 	@make ${MKFLAGS} -f Makefile.server
 	@make ${MKFLAGS} -f Makefile.client
