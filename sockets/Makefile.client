@@ -1,8 +1,8 @@
 CC  = gcc
 LD  = ${CC}
 
-CFLAGS   = -Wall -O3 -march=native -I../../libfoo/include
-LDFLAGS = ${CFLAGS} -L../../libfoo/lib
+CFLAGS = -Wall -O3 -march=native -I../libfoo/include
+LDFLAGS = ${CFLAGS} -L../libfoo/lib
 LDLIBS = -lfoo
 
 SOURCES = client.c
