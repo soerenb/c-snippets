@@ -33,6 +33,8 @@ TARGET_BIN = $(addsuffix .bin, $(word 1, $(basename ${SOURCES})))
 
 all: ${TARGET_ELF} ${EXT_TARGS}
 
+-include $(OBJECTS:.o=.d)
+
 debug: CXXFLAGS += -O0 -g -p -U_FORTIFY_SOURCE
 debug: CFLAGS += -O0 -g -p -U_FORTIFY_SOURCE
 debug: LDFLAGS += -g -Wl,-Map,${LD_MAP}
@@ -54,13 +56,13 @@ else
    Q = @
 endif
 
-cc_c_o = ${CC} -c ${CFLAGS} ${SYMBOLS} -o $@ $<
+cc_c_o = ${CC} -c ${CFLAGS} ${SYMBOLS} -MMD -MP -o $@ $<
 quiet_cc_c_o = CC $@
-cc_S_o = ${CC} -c ${ASFLAGS} ${SYMBOLS} -o $@ $<
+cc_S_o = ${CC} -c ${ASFLAGS} ${SYMBOLS} -MMD -MP -o $@ $<
 cc_s_o = ${CC} -c ${ASFLAGS} -o $@ $<
 quiet_cc_s_o = AS $@
 quiet_cc_S_o = ${quiet_cc_s_o}
-cxx_cpp_o = ${CXX} -c ${CXXFLAGS} ${SYMBOLS} -o $@ $<
+cxx_cpp_o = ${CXX} -c ${CXXFLAGS} ${SYMBOLS} -MMD -MP -o $@ $<
 quiet_cxx_cpp_o = CXX $@
 ld_o_elf = ${LD} ${LDFLAGS} -o $@ $(OBJECTS) ${LDLIBS}
 quiet_ld_o_elf = LD $@
@@ -86,7 +88,7 @@ quiet_ld_o_elf = LD $@
 	@${call ld_o_elf}
 
 clean:
-	rm -f *.o *~ *.bin linker.map *.out dump *.elf *.gcov *.gcno *.gcda ${EXT_TARGS} ${EXT_CLEAN}
+	rm -f *.o *.d *~ *.bin linker.map *.out dump *.elf *.gcov *.gcno *.gcda ${EXT_TARGS} ${EXT_CLEAN}
 
 war:
 	@echo "No! Make love not war!"
