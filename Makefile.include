@@ -67,19 +67,19 @@ quiet_cxx_cpp_o = CXX $@
 ld_o_elf = ${LD} ${LDFLAGS} -o $@ $(OBJECTS) ${LDLIBS}
 quiet_ld_o_elf = LD $@
 
-%.o: %.S
+%.o: ${SRCDIR}%.S
 	@echo "$(${quiet}cc_S_o)"
 	@${call cc_S_o}
 
-%.o: %.s
+%.o: ${SRCDIR}%.s
 	@echo "$(${quiet}cc_s_o)"
 	@${call cc_s_o}
 
-%.o: %.c
+%.o: ${SRCDIR}%.c
 	@echo "$(${quiet}cc_c_o)"
 	@${call cc_c_o}
 
-%.o: %.cpp
+%.o: ${SRCDIR}%.cpp
 	@echo "$(${quiet}cxx_cpp_o)"
 	@${call cxx_cpp_o}
 
