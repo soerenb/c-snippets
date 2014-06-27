@@ -25,11 +25,11 @@ endif
 # Filename for linker map file
 LD_MAP=linker.map
 
-OBJECTS = $(addsuffix .o, $(basename ${SOURCES}))
-TARGET_ELF = $(addsuffix .elf, $(word 1, $(basename ${SOURCES})))
-TARGET_BIN = $(addsuffix .bin, $(word 1, $(basename ${SOURCES})))
+OBJECTS = $(addprefix ${BUILDDIR}, $(addsuffix .o, $(basename ${SOURCES})))
+TARGET_ELF = $(addprefix ${BUILDDIR}, $(addsuffix .elf, $(word 1, $(basename ${SOURCES}))))
+TARGET_BIN = $(addprefix ${BUILDDIR}, $(addsuffix .bin, $(word 1, $(basename ${SOURCES}))))
 
-.PHONY: clean war love
+.PHONY: clean distclean war love
 
 all: ${TARGET_ELF} ${EXT_TARGS}
 
@@ -67,28 +67,37 @@ quiet_cxx_cpp_o = CXX $@
 ld_o_elf = ${LD} ${LDFLAGS} -o $@ $(OBJECTS) ${LDLIBS}
 quiet_ld_o_elf = LD $@
 
-%.o: ${SRCDIR}%.S
+${BUILDDIR}%.o: ${SRCDIR}%.S ${BUILDDIR}
 	@echo "$(${quiet}cc_S_o)"
 	@${call cc_S_o}
 
-%.o: ${SRCDIR}%.s
+${BUILDDIR}%.o: ${SRCDIR}%.s ${BUILDDIR}
 	@echo "$(${quiet}cc_s_o)"
 	@${call cc_s_o}
 
-%.o: ${SRCDIR}%.c
+${BUILDDIR}%.o: ${SRCDIR}%.c ${BUILDDIR}
 	@echo "$(${quiet}cc_c_o)"
 	@${call cc_c_o}
 
-%.o: ${SRCDIR}%.cpp
+${BUILDDIR}%.o: ${SRCDIR}%.cpp ${BUILDDIR}
 	@echo "$(${quiet}cxx_cpp_o)"
 	@${call cxx_cpp_o}
 
-%.elf: %.o ${OBJECTS}
+${BUILDDIR}%.elf: ${BUILDDIR}%.o ${OBJECTS}
 	@echo "$(${quiet}ld_o_elf)"
 	@${call ld_o_elf}
 
+${BUILDDIR}:
+	mkdir -p $@
+
 clean:
-	rm -f *.o *.d *~ *.bin linker.map *.out dump *.elf *.gcov *.gcno *.gcda ${EXT_TARGS} ${EXT_CLEAN}
+	rm -f $(BUILDDIR)*.o $(BUILDDIR)*.d $(BUILDDIR)*.bin \
+	      $(BUILDDIR)linker.map $(BUILDDIR)*.out $(BUILDDIR)dump \
+	      $(BUILDDIR)*.elf $(BUILDDIR)*.gcov $(BUILDDIR)*.gcno \
+	      $(BUILDDIR)*.gcda ${EXT_TARGS} ${EXT_CLEAN} $(SRCDIR)*~
+
+distclean: clean
+	rm -rf $(BUILDDIR)
 
 war:
 	@echo "No! Make love not war!"
