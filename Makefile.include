@@ -10,6 +10,7 @@ AR ?= ar
 OBJDUMP ?= objdump
 OBJCOPY ?= objcopy
 SIZE ?= size
+STRIP ?= strip
 LDFLAGS ?= ${CFLAGS}
 CFLAGS := -D_FORTIFY_SOURCE=2 -fstack-protector-strong -flto -fdiagnostics-color=auto ${CFLAGS}
 CXXFLAGS := -D_FORTIFY_SOURCE=2 -fstack-protector-strong -flto -fdiagnostics-color=auto ${CXXFLAGS}
@@ -66,6 +67,8 @@ cxx_cpp_o = ${CXX} -c ${CXXFLAGS} ${SYMBOLS} -MMD -MP -o $@ $<
 quiet_cxx_cpp_o = CXX $@
 ld_o_elf = ${LD} ${LDFLAGS} -o $@ $(OBJECTS) ${LDLIBS}
 quiet_ld_o_elf = LD $@
+strip_elf = ${STRIP} ${STRIPFLAGS} $<
+quiet_strip_elf = STRIP $<
 
 ${BUILDDIR}%.o: ${SRCDIR}%.S ${BUILDDIR}
 	@echo "$(${quiet}cc_S_o)"
@@ -89,6 +92,10 @@ ${BUILDDIR}%.elf: ${BUILDDIR}%.o ${OBJECTS}
 
 ${BUILDDIR}:
 	mkdir -p $@
+
+strip: ${TARGET_ELF}
+	@echo "$(${quiet}strip_elf)"
+	@${call strip_elf}
 
 clean:
 	rm -f $(BUILDDIR)*.o $(BUILDDIR)*.d $(BUILDDIR)*.bin \
