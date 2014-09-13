@@ -69,6 +69,8 @@ ld_o_elf = ${LD} ${LDFLAGS} -o $@ $(OBJECTS) ${LDLIBS}
 quiet_ld_o_elf = LD $@
 strip_elf = ${STRIP} ${STRIPFLAGS} $<
 quiet_strip_elf = STRIP $<
+size_elf = ${SIZE} ${SIZEFLAGS} $<
+quiet_size_elf = SIZE $<
 
 ${BUILDDIR}%.o: ${SRCDIR}%.S ${BUILDDIR}
 	@echo "$(${quiet}cc_S_o)"
@@ -96,6 +98,10 @@ ${BUILDDIR}:
 strip: ${TARGET_ELF}
 	@echo "$(${quiet}strip_elf)"
 	@${call strip_elf}
+
+size: ${TARGET_ELF}
+	@echo "$(${quiet}size_elf)"
+	@${call size_elf}
 
 clean:
 	rm -f $(BUILDDIR)*.o $(BUILDDIR)*.d $(BUILDDIR)*.bin \
