@@ -72,19 +72,19 @@ quiet_strip_elf = STRIP $<
 size_elf = ${SIZE} ${SIZEFLAGS} $<
 quiet_size_elf = SIZE $<
 
-${BUILDDIR}%.o: ${SRCDIR}%.S ${BUILDDIR}
+${BUILDDIR}%.o: ${SRCDIR}%.S | ${BUILDDIR}
 	@echo "$(${quiet}cc_S_o)"
 	@${call cc_S_o}
 
-${BUILDDIR}%.o: ${SRCDIR}%.s ${BUILDDIR}
+${BUILDDIR}%.o: ${SRCDIR}%.s | ${BUILDDIR}
 	@echo "$(${quiet}cc_s_o)"
 	@${call cc_s_o}
 
-${BUILDDIR}%.o: ${SRCDIR}%.c ${BUILDDIR}
+${BUILDDIR}%.o: ${SRCDIR}%.c | ${BUILDDIR}
 	@echo "$(${quiet}cc_c_o)"
 	@${call cc_c_o}
 
-${BUILDDIR}%.o: ${SRCDIR}%.cpp ${BUILDDIR}
+${BUILDDIR}%.o: ${SRCDIR}%.cpp | ${BUILDDIR}
 	@echo "$(${quiet}cxx_cpp_o)"
 	@${call cxx_cpp_o}
 
