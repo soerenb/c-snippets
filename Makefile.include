@@ -30,8 +30,6 @@ OBJECTS = $(addprefix ${BUILDDIR}, $(addsuffix .o, $(basename ${SOURCES})))
 TARGET_ELF = $(addprefix ${BUILDDIR}, $(addsuffix .elf, $(word 1, $(basename ${SOURCES}))))
 TARGET_BIN = $(addprefix ${BUILDDIR}, $(addsuffix .bin, $(word 1, $(basename ${SOURCES}))))
 
-.PHONY: clean distclean war love
-
 all: ${TARGET_ELF} ${EXT_TARGS}
 
 -include $(OBJECTS:.o=.d)
@@ -95,25 +93,31 @@ ${BUILDDIR}%.elf: ${BUILDDIR}%.o ${OBJECTS}
 ${BUILDDIR}:
 	mkdir -p $@
 
+.PHONY: strip
 strip: ${TARGET_ELF}
 	@echo "$(${quiet}strip_elf)"
 	@${call strip_elf}
 
+.PHONY: size
 size: ${TARGET_ELF}
 	@echo "$(${quiet}size_elf)"
 	@${call size_elf}
 
+.PHONY: clean
 clean:
 	rm -f $(BUILDDIR)*.o $(BUILDDIR)*.d $(BUILDDIR)*.bin \
 	      $(BUILDDIR)linker.map $(BUILDDIR)*.out $(BUILDDIR)dump \
 	      $(BUILDDIR)*.elf $(BUILDDIR)*.gcov $(BUILDDIR)*.gcno \
 	      $(BUILDDIR)*.gcda ${EXT_TARGS} ${EXT_CLEAN} $(SRCDIR)*~
 
+.PHONY: distclean
 distclean: clean
 	rm -rf $(BUILDDIR)
 
+.PHONY: war
 war:
 	@echo "No! Make love not war!"
 
+.PHONY: love
 love:
 	@echo "Sorry, I'm just a dumb machine"
