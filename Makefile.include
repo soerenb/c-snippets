@@ -11,9 +11,9 @@ OBJDUMP ?= objdump
 OBJCOPY ?= objcopy
 SIZE ?= size
 STRIP ?= strip
-LDFLAGS ?= ${CFLAGS}
-CFLAGS := -D_FORTIFY_SOURCE=2 -fstack-protector-strong -flto -fdiagnostics-color=auto ${CFLAGS}
-CXXFLAGS := -D_FORTIFY_SOURCE=2 -fstack-protector-strong -flto -fdiagnostics-color=auto ${CXXFLAGS}
+CFLAGS := -D_FORTIFY_SOURCE=2 -fstack-protector-strong -flto -fpie -fdiagnostics-color=auto ${CFLAGS}
+CXXFLAGS := -D_FORTIFY_SOURCE=2 -fstack-protector-strong -flto -fpie -fdiagnostics-color=auto ${CXXFLAGS}
+LDFLAGS := -pie -flto ${CFLAGS} ${LDFLAGS}
 
 # Determine if project is written in c or c++ by looking at the suffix of the
 # main source file
