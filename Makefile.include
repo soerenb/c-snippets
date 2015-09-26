@@ -61,6 +61,8 @@ cc_S_o = ${CC} -c ${ASFLAGS} ${SYMBOLS} -MMD -MP -o $@ $<
 cc_s_o = ${CC} -c ${ASFLAGS} -o $@ $<
 quiet_cc_s_o = AS $@
 quiet_cc_S_o = ${quiet_cc_s_o}
+cc_c_s = ${CC} -S ${CFLAGS} ${SYMBOLS} -o $@ $<
+quiet_cc_c_s = CC $@
 cxx_cpp_o = ${CXX} -c ${CXXFLAGS} ${SYMBOLS} -MMD -MP -o $@ $<
 quiet_cxx_cpp_o = CXX $@
 ld_o_elf = ${LD} ${LDFLAGS} -o $@ $(OBJECTS) ${LDLIBS}
@@ -85,6 +87,10 @@ ${BUILDDIR}%.o: ${SRCDIR}%.c | ${BUILDDIR}
 ${BUILDDIR}%.o: ${SRCDIR}%.cpp | ${BUILDDIR}
 	@echo "$(${quiet}cxx_cpp_o)"
 	@${call cxx_cpp_o}
+
+${BUILDDIR}%.s: ${SRCDIR}%.c | ${BUILDDIR}
+	@echo "$(${quiet}cc_c_s)"
+	@${call cc_c_s}
 
 ${BUILDDIR}%.elf: ${BUILDDIR}%.o ${OBJECTS}
 	@echo "$(${quiet}ld_o_elf)"
