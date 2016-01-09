@@ -241,7 +241,7 @@ static unsigned int edit_world(struct world *w)
 	timeout(tout);
 	erase();
 
-	return life_cells;;
+	return life_cells;
 }
 
 
