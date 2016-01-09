@@ -80,13 +80,13 @@ static void print_world(struct world *w, const char *ch_life,
 			if (cell->state == CELL_STATE_DEAD) {
 				if (cell->next_state == CELL_STATE_LIFE)
 					attron(COLOR_PAIR(3));
-				printw("%.1s", ch_dead);
+				printw("%s", ch_dead);
 			} else {
 				if (cell->next_state == CELL_STATE_LIFE)
 					attron(COLOR_PAIR(2));
 				else
 					attron(COLOR_PAIR(1));
-				printw("%.1s", ch_life);
+				printw("%s", ch_life);
 			}
 			attroff(COLOR_PAIR(1));
 			attroff(COLOR_PAIR(2));
