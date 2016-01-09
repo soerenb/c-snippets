@@ -13,42 +13,43 @@
  * GNU General Public License for more details.
  */
 
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <foo.h>
 
-static unsigned int rm_rightmost(unsigned int n)
+static uintptr_t rm_rightmost(uintptr_t n)
 {
 	return n & (n - 1);
 }
 
-static unsigned int ex_rightmost(unsigned int n)
+static uintptr_t ex_rightmost(uintptr_t n)
 {
 	return n & (-n);
 }
 
-static unsigned int smear_left(unsigned int n)
+static uintptr_t smear_left(uintptr_t n)
 {
 	return n | (-n);
 }
 
-static unsigned int smear_right(unsigned int n)
+static uintptr_t smear_right(uintptr_t n)
 {
 	return n | (n - 1);
 }
 
-static unsigned int rm_smear_left(unsigned int n)
+static uintptr_t rm_smear_left(uintptr_t n)
 {
 	return n ^ (-n);
 }
 
-static unsigned int ex_smear_right(unsigned int n)
+static uintptr_t ex_smear_right(uintptr_t n)
 {
 	return n ^ (n - 1);
 }
 
-static unsigned int ex_rm_smear_right(unsigned int n)
+static uintptr_t ex_rm_smear_right(uintptr_t n)
 {
 	return ~n & (n - 1);
 }
@@ -57,7 +58,7 @@ int main(int argc, char *argv[])
 {
 	while (1) {
 		char *input;
-		unsigned int num;
+		uintptr_t num;
 
 		printf("enter number (q to exit): ");
 		input = foo_gets();
@@ -75,12 +76,12 @@ int main(int argc, char *argv[])
 			printf("WARNING: strtol conversion out of range.\n");
 		free(input);
 
-		printf("	     remove: %#x => %#x\n", num, rm_rightmost(num));
-		printf("	    extract: %#x => %#x\n", num, ex_rightmost(num));
-		printf("	 smear left: %#x => %#x\n", num, smear_left(num));
-		printf("	smear right: %#x => %#x\n", num, smear_right(num));
-		printf("remove & smear left: %#x => %#x\n", num, rm_smear_left(num));
-		printf("extr. & smear right: %#x => %#x\n", num, ex_smear_right(num));
-		printf("ex, rm, smear right: %#x => %#x\n", num, ex_rm_smear_right(num));
+		printf("	     remove: %#" PRIxPTR " => %#" PRIxPTR "\n", num, rm_rightmost(num));
+		printf("	    extract: %#" PRIxPTR " => %#" PRIxPTR "\n", num, ex_rightmost(num));
+		printf("	 smear left: %#" PRIxPTR " => %#" PRIxPTR "\n", num, smear_left(num));
+		printf("	smear right: %#" PRIxPTR " => %#" PRIxPTR "\n", num, smear_right(num));
+		printf("remove & smear left: %#" PRIxPTR " => %#" PRIxPTR "\n", num, rm_smear_left(num));
+		printf("extr. & smear right: %#" PRIxPTR " => %#" PRIxPTR "\n", num, ex_smear_right(num));
+		printf("ex, rm, smear right: %#" PRIxPTR " => %#" PRIxPTR "\n", num, ex_rm_smear_right(num));
 	}
 }

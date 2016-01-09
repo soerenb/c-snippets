@@ -12,13 +12,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <string.h>
 #include <execinfo.h>
 
-static unsigned int array[] = {
+static uintptr_t array[] = {
 	99,
 	1,
 	37,
@@ -35,17 +36,15 @@ static unsigned int array[] = {
  */
 void sighndl(int sig)
 {
-	int i, size;
 	void *buf[32];
-	char **trace;
 
 	printf("*********** segfault ***********\n\n");
 
-	size = backtrace(buf, sizeof(buf));
-	trace = backtrace_symbols(buf, size);
+	size_t size = backtrace(buf, sizeof(buf));
+	char **trace = backtrace_symbols(buf, size);
 
 	printf("backtrace:\n");
-	for (i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 		fprintf(stderr, "%s\n", trace[i]);
 
 	exit(-1);

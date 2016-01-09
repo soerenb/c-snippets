@@ -12,13 +12,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include <stdint.h>
 #include <stdio.h>
 
 int main(int argc, char *argv[])
 {
-	int i;
-
-	for (i = 0; i < 10; i++) {
+	for (uintptr_t i = 0; i < 10; i++) {
 		switch (i) {
 		case 0 ... 3:
 			printf("0 <= i <= 3\n");

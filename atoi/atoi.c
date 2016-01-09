@@ -12,6 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -42,7 +43,7 @@ static int my_atoi(const char *s)
 
 int main(int argc, char *argv[])
 {
-	int num, ref;
+	intptr_t num, ref;
 	char *num_str;
 
 	if (argc > 1) {
@@ -59,10 +60,11 @@ int main(int argc, char *argv[])
 	num = my_atoi(num_str);
 	ref = atoi(num_str);
 	if (num != ref)
-		fprintf(stderr, "ERROR: mismatch: in:%s, out:%d, ref:%d\n",
+		fprintf(stderr, "ERROR: mismatch: in:%s, out:%" PRIdPTR ", ref:%" PRIdPTR "\n",
 			num_str, num, ref);
 	else
-		printf("in:%s, out:%d, ref:%d\n", num_str, num, ref);
+		printf("in:%s, out:%" PRIdPTR ", ref:%" PRIdPTR "\n",
+		       num_str, num, ref);
 
 	return 0;
 }

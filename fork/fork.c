@@ -12,6 +12,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -20,10 +22,10 @@
 #include <signal.h>
 #include <foo.h>
 
-static int parent(int *pipefd, int cpid)
+static int parent(int *pipefd, pid_t cpid)
 {
 	char *input;
-	unsigned int tx_buf;
+	uintptr_t tx_buf;
 
 	close(pipefd[0]);
 	while (1) {
@@ -44,20 +46,20 @@ static int parent(int *pipefd, int cpid)
 		if (errno == ERANGE)
 			printf("WARNING: strtol conversion out of range.\n");
 		free(input);
-		if (write(pipefd[1], &tx_buf, 4) != 4)
+		if (write(pipefd[1], &tx_buf, sizeof(tx_buf)) != sizeof(tx_buf))
 			printf("WARNING: Not all data was written.\n");
 	}
 }
 
 static void child(int *pipefd)
 {
-	unsigned int rx_buf;
+	uintptr_t rx_buf;
 
 	close(pipefd[1]);
 	while (1) {
-		if (read(pipefd[0], &rx_buf, 4) != 4)
+		if (read(pipefd[0], &rx_buf, sizeof(rx_buf)) != sizeof(rx_buf))
 			printf("WARNING: Unexpected lengh in read data.\n");
-		printf("%#8.8x\n", rx_buf);
+		printf("%#8.8" PRIxPTR "\n", rx_buf);
 	}
 }
 

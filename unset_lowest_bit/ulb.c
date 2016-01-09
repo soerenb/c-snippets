@@ -12,6 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -20,8 +21,7 @@
 
 int main(int argc, char *argv[])
 {
-	uint32_t data;
-	int mask;
+	uint32_t data, mask;
 	char *buf;
 
 	while (1) {
@@ -39,14 +39,14 @@ int main(int argc, char *argv[])
 		data = strtol(buf, NULL, 0);
 		free(buf);
 
-		printf("data = %#8.8x\n", data);
+		printf("data = %#8.8" PRIx32 "\n", data);
 		if (data) {
 			mask = 1;
 			while (!(data & mask))
 				mask <<= 1;
 			data &= ~mask;
 		}
-		printf("data = %#8.8x\n", data);
+		printf("data = %#8.8" PRIx32 "\n", data);
 	}
 
 	return 0;

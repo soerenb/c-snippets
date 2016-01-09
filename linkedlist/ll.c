@@ -12,12 +12,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <foo.h>
 
 struct llel {
-	int	     value;
+	intptr_t value;
 	struct llel *next;
 };
 
@@ -26,7 +28,7 @@ struct llel {
  * @list	Pointer to list start
  * @value	Value of the element
  */
-static void list_append_element(struct llel *list, const int value)
+static void list_append_element(struct llel *list, const intptr_t value)
 {
 	if (list != NULL) {
 		struct llel *temp = malloc(sizeof(struct llel));
@@ -47,9 +49,9 @@ static void list_append_element(struct llel *list, const int value)
  * Returns pointer to list start
  */
 static struct llel *list_add_element(struct llel *list,
-		const unsigned int index, const int value)
+		const uintptr_t index, const intptr_t value)
 {
-	unsigned int i = 0;
+	uintptr_t i = 0;
 	struct llel *start = list;
 	struct llel *prev;
 	struct llel *temp = malloc(sizeof(struct llel));
@@ -83,9 +85,9 @@ static struct llel *list_add_element(struct llel *list,
  * @index	Index of the element to remove
  * Returns pointer to list start
  */
-static struct llel *list_rm_element(struct llel *list, const unsigned int index)
+static struct llel *list_rm_element(struct llel *list, const uintptr_t index)
 {
-	unsigned int i = 0;
+	uintptr_t i = 0;
 	struct llel *prev = NULL;
 	struct llel *start = list;
 
@@ -185,8 +187,8 @@ int main(int argc, char *argv[])
 {
 	char cmd;
 	char *buf;
-	unsigned int idx;
-	unsigned int tmp;
+	uintptr_t idx;
+	uintptr_t tmp;
 	struct llel *element;
 	struct llel *list_start = NULL;
 
@@ -197,8 +199,8 @@ int main(int argc, char *argv[])
 		element = list_start;
 		idx = 0;
 		while (element != NULL) {
-			printf("element[%u].value = %d\n", idx++,
-					element->value);
+			printf("element[%" PRIuPTR "].value = %" PRIdPTR "\n",
+			       idx++, element->value);
 			element = element->next;
 		}
 		printf("------------------------------------\n");
@@ -243,10 +245,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'm':
 		{
-			int val = list_get_middle(list_start)->value;
+			intptr_t val = list_get_middle(list_start)->value;
 
 			printf("Middle element:\n");
-			printf("Value = %d\n", val);
+			printf("Value = %" PRIdPTR "\n", val);
 			break;
 		}
 		case 'i':

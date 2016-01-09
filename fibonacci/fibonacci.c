@@ -12,6 +12,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,13 +24,11 @@
  * @fib		Array to store fibonacci series
  * @limit	Number of fibonacci numbers to calculate
  */
-static void fibonacci_it(unsigned int *fib, unsigned int limit)
+static void fibonacci_it(uintptr_t *fib, size_t limit)
 {
-	unsigned int i;
-
 	fib[0] = 0;
 	fib[1] = 1;
-	for (i = 2; i < limit; i++)
+	for (uintptr_t i = 2; i < limit; i++)
 		fib[i] = fib[i - 1] + fib[i - 2];
 }
 
@@ -37,9 +37,9 @@ static void fibonacci_it(unsigned int *fib, unsigned int limit)
  * @fib_rec	Array to store fibonacci series
  * @limit	Number of fibonacci numbers to calculate
  */
-static unsigned int fibonacci_rec(unsigned int *fib_rec, unsigned int limit)
+static uintptr_t fibonacci_rec(uintptr_t *fib_rec, size_t limit)
 {
-	unsigned int ret;
+	uintptr_t ret;
 
 	if (limit == 0) {
 		fib_rec[0] = 0;
@@ -58,11 +58,10 @@ static unsigned int fibonacci_rec(unsigned int *fib_rec, unsigned int limit)
 
 int main(int argc, char *argv[])
 {
-	int i;
-	size_t limit = 48;
 	char *buf;
-	unsigned int *fib_it;
-	unsigned int *fib_rec;
+	size_t limit = 48;
+	uintptr_t *fib_it;
+	uintptr_t *fib_rec;
 
 	if (argc > 2) {
 		printf("usage:\n\t%s [<limit>]\n", argv[0]);
@@ -72,8 +71,8 @@ int main(int argc, char *argv[])
 	if (argc == 2) {
 		limit = strtol(argv[1], NULL, 0);
 	} else {
-		printf("Enter the number of elements to calculate (%u): ",
-				(unsigned int)limit);
+		printf("Enter the number of elements to calculate (%zu): ",
+				limit);
 		buf = foo_gets();
 		if ((buf != NULL) && strcmp(buf, "\n"))
 			limit = strtol(buf, NULL, 0);
@@ -86,30 +85,31 @@ int main(int argc, char *argv[])
 	fib_rec = malloc(limit * sizeof(*fib_rec));
 
 	/* Calculating */
-	printf("Calculating the first %u Fibonacci numbers\n",
-			(unsigned int)limit);
+	printf("Calculating the first %zu Fibonacci numbers\n", limit);
 	fibonacci_it(fib_it, limit);
 	fibonacci_rec(fib_rec, limit - 1);
 
 	/* Printing series */
 	printf("Iterative calculated:\n");
-	printf("F[%u] = %u\n", 0, fib_it[0]);
-	for (i = 1; i < limit; i++) {
+	printf("F[%u] = %" PRIuPTR "\n", 0, fib_it[0]);
+	for (uintptr_t i = 1; i < limit; i++) {
 		if (fib_it[i] < fib_it[i - 1]) {
-			printf("Integer overflow detected at F[%u].\n", i);
+			printf("Integer overflow detected at F[%" PRIuPTR "].\n",
+			       i);
 			break;
 		}
-		printf("F[%u] = %u\n", i, fib_it[i]);
+		printf("F[%" PRIuPTR "] = %" PRIuPTR "\n", i, fib_it[i]);
 	}
 	printf("\n");
 	printf("Recursive calculated:\n");
-	printf("F[%u] = %u\n", 0, fib_rec[0]);
-	for (i = 1; i < limit; i++) {
+	printf("F[%u] = %" PRIuPTR "\n", 0, fib_rec[0]);
+	for (uintptr_t i = 1; i < limit; i++) {
 		if (fib_rec[i] < fib_rec[i - 1]) {
-			printf("Integer overflow detected at F[%u].\n", i);
+			printf("Integer overflow detected at F[%" PRIuPTR "].\n",
+			       i);
 			break;
 		}
-		printf("F[%u] = %u\n", i, fib_rec[i]);
+		printf("F[%" PRIuPTR "] = %" PRIuPTR "\n", i, fib_rec[i]);
 	}
 
 	free(fib_it);

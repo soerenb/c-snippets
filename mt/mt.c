@@ -12,17 +12,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 
 /* Constants */
-static const int THREADC = 10;
+static const size_t THREADC = 10;
 
 /* Global vars */
-static unsigned int counter;
-static unsigned int counter2;
+static uintptr_t counter;
+static uintptr_t counter2;
 
 /* Mutex */
 static pthread_mutex_t mutex_counter;
@@ -31,8 +33,8 @@ static pthread_mutex_t mutex_counter;
 static void *thread(void *arg)
 {
 #ifdef VERBOSE
-	unsigned int id = *((unsigned int *)arg);
-	printf("Hello from thread %u! Counter: %u\n", id, counter);
+	size_t id = *((size_t *)arg);
+	printf("Hello from thread %zu! Counter: %" PRIuPTR "\n", id, counter);
 #endif
 
 	counter2 += counter;
@@ -46,8 +48,8 @@ static void *thread(void *arg)
 static void *thread_safe(void *arg)
 {
 #ifdef VERBOSE
-	unsigned int id = *((unsigned int *)arg);
-	printf("Hello from thread %u! Counter: %u\n", id, counter);
+	size_t id = *((size_t *)arg);
+	printf("Hello from thread %zu! Counter: %" PRIuPTR "\n", id, counter);
 #endif
 
 	/* Lock mutex -> compute -> release mutex */
@@ -64,17 +66,15 @@ static void *thread_safe(void *arg)
 
 int main(int argc, char **argv)
 {
-	int i;
 	pthread_t threads[THREADC];
 	pthread_attr_t attr[THREADC];
-	int tret;
-	unsigned int id[THREADC];
-	unsigned int ref_counter = 0;
+	size_t id[THREADC];
+	uintptr_t ref_counter = 0;
 
 	pthread_mutex_init(&mutex_counter, NULL);
 
 	/* Spawn unsafe threads */
-	for (i = 0; i < THREADC; i++) {
+	for (uintptr_t i = 0; i < THREADC; i++) {
 		/* Initialize pthread_attr objects */
 		pthread_attr_init(&attr[i]);
 		/* Assure threads are joinable */
@@ -83,46 +83,49 @@ int main(int argc, char **argv)
 		/* Assign unique ID */
 		id[i] = i;
 		/* Actual thread spawning */
-		tret = pthread_create(&threads[i], &attr[i], &thread,
+		intptr_t tret = pthread_create(&threads[i], &attr[i], &thread,
 				(void *)(&id[i]));
 		if (tret)
-			printf("error %d while spawning thread\n", tret);
+			printf("error %" PRIdPTR " while spawning thread\n",
+			       tret);
 	}
 
 	/* Join previously with spawned threads */
-	for (i = 0; i < THREADC; i++) {
+	for (uintptr_t i = 0; i < THREADC; i++) {
 		ref_counter += i; /* referece value to compare counter 2 with */
 		pthread_join(threads[i], NULL);	/* actual joining */
 	}
 
 	/* Print out counter values */
 	printf("Multithreaded w/o mutex:\n");
-	printf("Counter:    %u\n", counter);
-	printf("Counter2:   %u\n", counter2);
-	printf("ref_counter: %u\n", ref_counter);
-	printf("THREADC:    %u\n", THREADC);
+	printf("Counter:    %" PRIuPTR "\n", counter);
+	printf("Counter2:   %" PRIuPTR "\n", counter2);
+	printf("ref_counter: %" PRIuPTR "\n", ref_counter);
+	printf("THREADC:    %zu\n", THREADC);
 
 	/* Reset counter */
 	counter = 0;
 	counter2 = 0;
 
 	/* Spawn safe threads */
-	for (i = 0; i < THREADC; i++)
-		tret = pthread_create(&threads[i], &attr[i], &thread_safe,
-				(void *)(&id[i]));
+	for (uintptr_t i = 0; i < THREADC; i++) {
+		intptr_t tret = pthread_create(&threads[i], &attr[i],
+				&thread_safe, (void *)(&id[i]));
 		if (tret)
-			printf("error %d while spawning thread\n", tret);
+			printf("error %" PRIdPTR " while spawning thread\n",
+			       tret);
+	}
 
 	/* Join threads */
-	for (i = 0; i < THREADC; i++)
+	for (uintptr_t i = 0; i < THREADC; i++)
 		pthread_join(threads[i], NULL);
 
 	/* Print out counter values */
 	printf("Multithreaded w/ mutex:\n");
-	printf("Counter:    %u\n", counter);
-	printf("Counter2:   %u\n", counter2);
-	printf("ref_counter: %u\n", ref_counter);
-	printf("THREADC:    %u\n", THREADC);
+	printf("Counter:    %" PRIuPTR "\n", counter);
+	printf("Counter2:   %" PRIuPTR "\n", counter2);
+	printf("ref_counter: %" PRIuPTR "\n", ref_counter);
+	printf("THREADC:    %zu\n", THREADC);
 
 	return 0;
 }

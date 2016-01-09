@@ -12,6 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
@@ -32,7 +33,7 @@ enum cell_state {
 struct cell {
 	enum cell_state state;
 	enum cell_state next_state;
-	unsigned int life_neighbors;
+	uint8_t life_neighbors;
 };
 
 /**
@@ -46,12 +47,12 @@ struct cell {
  */
 struct world {
 	struct cell *cells;
-	unsigned long long iteration;
-	unsigned long long num_life_cells;
-	unsigned long long num_life_cells_next;
-	unsigned long height;
-	unsigned long width;
-	int wrap;
+	uintmax_t iteration;
+	uintmax_t num_life_cells;
+	uintmax_t num_life_cells_next;
+	size_t height;
+	size_t width;
+	bool wrap;
 };
 
 /**
@@ -65,16 +66,14 @@ struct world {
 static void print_world(struct world *w, const char *ch_life,
 		const char *ch_dead)
 {
-	unsigned int x, y;
-
 	if (!ch_dead)
 		ch_dead = " ";
 
 	if (!ch_life)
 		ch_life = "☺";
 
-	for (y = 0; y < w->height; y++) {
-		for (x = 0; x < w->width; x++) {
+	for (uintptr_t y = 0; y < w->height; y++) {
+		for (uintptr_t x = 0; x < w->width; x++) {
 			struct cell *cell = w->cells + y * w->width + x;
 
 			if (cell->state == CELL_STATE_DEAD) {
@@ -107,10 +106,10 @@ static void print_world(struct world *w, const char *ch_life,
  *
  * Return: Number of living neighbor cells.
  */
-static unsigned int get_num_life_neighbors(struct world *w, unsigned int _x,
-		unsigned int _y)
+static uintptr_t get_num_life_neighbors(struct world *w, size_t _x, size_t _y)
 {
-	unsigned int x, y, start_x, start_y, end_x, end_y, life_neighbors = 0;
+	size_t start_x, start_y, end_x, end_y;
+	uintmax_t life_neighbors = 0;
 
 	if (w->wrap) {
 		start_y = _y == 0 ? w->height - 1 : _y - 1;
@@ -124,8 +123,8 @@ static unsigned int get_num_life_neighbors(struct world *w, unsigned int _x,
 		end_x = _x == w->width - 1 ? 0 : (_x + 2) % w->width;
 	}
 
-	for (y = start_y; y != end_y; y = (y + 1) % w->height) {
-		for (x = start_x; x != end_x; x = (x + 1) % w->width) {
+	for (size_t y = start_y; y != end_y; y = (y + 1) % w->height) {
+		for (size_t x = start_x; x != end_x; x = (x + 1) % w->width) {
 			if (w->cells[y * w->width + x].state ==
 				       CELL_STATE_LIFE && !(x == _x && y == _y))
 				life_neighbors++;
@@ -141,7 +140,7 @@ static unsigned int get_num_life_neighbors(struct world *w, unsigned int _x,
  *
  * Return:	New cell state
  */
-static int toggle_cell_state(struct cell *cell)
+static enum cell_state toggle_cell_state(struct cell *cell)
 {
 	if (cell->state == CELL_STATE_LIFE)
 		cell->state = CELL_STATE_DEAD;
@@ -159,11 +158,11 @@ static int toggle_cell_state(struct cell *cell)
  *
  * Return:	Number of living cells in the world.
  */
-static unsigned int edit_world(struct world *w)
+static uintmax_t edit_world(struct world *w)
 {
-	int x, y, ref_x, ref_y;
-	int edit = 1;
-	unsigned int life_cells = 0;
+	size_t x, y, ref_x, ref_y;
+	bool edit = true;
+	uintmax_t life_cells = 0;
 	/* setup curses for editing */
 	int tout = stdscr->_delay;	/* store current timeout */
 	int visibility = curs_set(2);	/* cursor visiblity, 2 = very visible */
@@ -182,7 +181,7 @@ static unsigned int edit_world(struct world *w)
 		ch = getch();
 		switch (ch) {
 		case 'q':
-			edit = 0;
+			edit = false;
 			break;
 		case ' ':
 			state = toggle_cell_state(&w->cells[(y - ref_y) * w->width + (x - ref_x)]);
@@ -256,12 +255,11 @@ static unsigned int edit_world(struct world *w)
  *
  * Return:	Handle to the allocated struct world.
  */
-static struct world *create_world(unsigned int height, unsigned int width,
-		int wrap, int edit)
+static struct world *create_world(size_t height, size_t width, bool wrap,
+				  bool edit)
 {
 	struct world *w;
-	unsigned int x, y, rnd;
-	unsigned int life_cells = 0;
+	uintmax_t life_cells = 0;
 
 	w = malloc(sizeof(*w));
 	if (!w)
@@ -281,9 +279,10 @@ static struct world *create_world(unsigned int height, unsigned int width,
 	if (edit) {
 		life_cells = edit_world(w);
 	} else {
-		for (y = 0; y < height; y++) {
-			for (x = 0; x < width; x++) {
-				rnd = random() % 15;
+		for (size_t y = 0; y < height; y++) {
+			for (size_t x = 0; x < width; x++) {
+				uintptr_t rnd = random() % 15;
+
 				if (rnd > 7) {
 					w->cells[y * w->width + x].state =
 						CELL_STATE_LIFE;
@@ -322,11 +321,10 @@ static void destroy_world(struct world *w)
  */
 static void simulate_step(struct world *w)
 {
-	unsigned int x, y;
-	unsigned long long num_life_cells = 0;
+	uintmax_t num_life_cells = 0;
 
-	for (y = 0; y < w->height; y++) {
-		for (x = 0; x < w->width; x++) {
+	for (size_t y = 0; y < w->height; y++) {
+		for (size_t x = 0; x < w->width; x++) {
 			struct cell *cell = w->cells + y * w->width + x;
 			enum cell_state state = cell->state;
 
@@ -361,9 +359,8 @@ static void simulate_step(struct world *w)
  */
 static void do_state_transition(struct world *w)
 {
-	unsigned int x, y;
-	for (y = 0; y < w->height; y++) {
-		for (x = 0; x < w->width; x++) {
+	for (size_t y = 0; y < w->height; y++) {
+		for (size_t x = 0; x < w->width; x++) {
 			w->cells[y * w->width + x].state =
 				w->cells[y * w->width + x].next_state;
 			w->num_life_cells = w->num_life_cells_next;
@@ -400,13 +397,13 @@ int main(int argc, const char *argv[])
 	const char *arg_str;
 	const char *ch_cell_life = NULL;
 	const char *ch_cell_dead = NULL;
-	int edit = 0;
-	int wrap = 0;
-	unsigned int height = 0;
-	unsigned int width = 0;
-	unsigned int seed = 0xdeadbeef;
-	unsigned int manual_step = 0;
-	unsigned int delay = 500;
+	bool edit = false;
+	bool wrap = false;
+	bool manual_step = false;
+	size_t height = 0;
+	size_t width = 0;
+	uintptr_t seed = 0xdeadbeef;
+	uintptr_t delay = 500;
 
 	void *options = gopt_sort(&argc, argv, gopt_start(
 				gopt_option('h', 0, gopt_shorts('h'),
@@ -438,13 +435,13 @@ int main(int argc, const char *argv[])
 	}
 
 	if (gopt(options, 'm'))
-		manual_step = 1;
+		manual_step = true;
 
 	if (gopt(options, 'e'))
-		edit = 1;
+		edit = true;
 
 	if (gopt(options, 'r'))
-		wrap = 1;
+		wrap = true;
 
 	if (gopt_arg(options, 'd', &arg_str))
 		delay = strtoul(arg_str, NULL, 0);
@@ -501,8 +498,8 @@ int main(int argc, const char *argv[])
 		goto fail;
 
 	while (world->num_life_cells) {
-		printw("Iteration #%u | Life Cells: %u\n", world->iteration++,
-				world->num_life_cells);
+		printw("Iteration #%" PRIuMAX " Life Cells: %" PRIuMAX "",
+		       world->iteration++, world->num_life_cells);
 
 		simulate_step(world);
 		print_world(world, ch_cell_life, ch_cell_dead);
@@ -516,11 +513,10 @@ int main(int argc, const char *argv[])
 		erase();
 	}
 
-
 	timeout(-1);
-	printw("%llu iterations have been simulated. ", world->iteration);
+	printw("%" PRIuMAX " iterations have been simulated. ", world->iteration);
 	if (world->num_life_cells)
-		printw("%llu cells are still alive.\n", world->num_life_cells);
+		printw("%" PRIuMAX " cells are still alive.\n", world->num_life_cells);
 	else
 		printw("All life ceased to exist\n");
 	refresh();

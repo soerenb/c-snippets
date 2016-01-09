@@ -12,6 +12,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -20,18 +22,15 @@
 
 int main(int argc, char *argv[])
 {
-	int i, j, summe;
-	unsigned int upperbound = 1000;
-	unsigned int lowerbound = 1;
-	int divcount = 0;
-	int divs[100] = { 0 };
 	char *rline;
 	clock_t start = 0;
 	clock_t stop = 0;
+	uintptr_t lowerbound = 1;
+	uintptr_t upperbound = 1000;
 
 	printf("Searching for perfect numbers:\n");
 
-	printf("Enter lower bound for search (%u): ", lowerbound);
+	printf("Enter lower bound for search (%" PRIuPTR "): ", lowerbound);
 	rline = foo_gets();
 	if (rline == NULL) {
 		printf("ERROR: Error reading from stdin");
@@ -41,7 +40,7 @@ int main(int argc, char *argv[])
 		free(rline);
 	}
 
-	printf("Enter upper bound for search (%u): ", upperbound);
+	printf("Enter upper bound for search (%" PRIuPTR "): ", upperbound);
 	rline = foo_gets();
 	if (!rline) {
 		printf("ERROR: Error reading from stdin");
@@ -50,14 +49,17 @@ int main(int argc, char *argv[])
 			upperbound = strtol(rline, NULL, 0);
 		free(rline);
 	}
-	printf("Search range: %u..%u\n", lowerbound, upperbound);
+	printf("Search range: %" PRIuPTR "..%" PRIuPTR "\n",
+	       lowerbound, upperbound);
 
 	start = clock();
 
-	for (i = lowerbound; i <= upperbound; i++) {
-		summe = 0;
-		divcount = 0;
-		for (j = (i >> 1); j > 0; j--) {
+	for (uintptr_t i = lowerbound; i <= upperbound; i++) {
+		uintptr_t divcount = 0;
+		uintptr_t summe = 0;
+		uintptr_t  divs[100] = { 0 };
+
+		for (intptr_t j = i >> 1; j > 0; j--) {
 			if ((i % j) == 0) {
 				summe += j;
 				divs[divcount++] = j;
@@ -66,9 +68,9 @@ int main(int argc, char *argv[])
 				break;
 		}
 		if (summe == i) {
-			printf("%i\t\tDivs: ", summe);
-			for (j = 0; j < divcount; j++)
-				printf("%u ", divs[j]);
+			printf("%" PRIuPTR "\t\tDivs: ", summe);
+			for (uintptr_t j = 0; j < divcount; j++)
+				printf("%" PRIuPTR " ", divs[j]);
 			printf("\n");
 		}
 	}

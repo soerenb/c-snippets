@@ -19,7 +19,7 @@
 int main(int argc, char *argv[])
 {
 	json_bool ret;
-	unsigned int i, num_locations;
+	uintptr_t num_locations;
 	struct array_list *locations;
 	struct json_object *obj;
 	struct json_object *root = json_object_from_file("./input.json");
@@ -42,13 +42,13 @@ int main(int argc, char *argv[])
 		return 3;
 	}
 	num_locations = json_object_array_length(obj);
-	printf("Number of locations: %u\n", num_locations);
+	printf("Number of locations: %" PRIuPTR "\n", num_locations);
 
 	locations = json_object_get_array(obj);
 
 	printf("\n");
-	for (i = 0; i < num_locations; i++) {
-		unsigned int j, num_questions;
+	for (uintptr_t i = 0; i < num_locations; i++) {
+		uintptr_t num_questions;
 		struct json_object *obj2;
 		struct array_list *questions;
 
@@ -67,14 +67,13 @@ int main(int argc, char *argv[])
 			return 3;
 		}
 		num_questions = json_object_array_length(obj);
-		printf("Number of questions for location '%s': %u\n",
+		printf("Number of questions for location '%s': %" PRIuPTR "\n",
 				json_object_get_string(obj2), num_questions);
 		printf("\n");
 
 		questions = json_object_get_array(obj);
 
-		for (j = 0; j < num_questions; j++) {
-			unsigned int k;
+		for (uintptr_t j = 0; j < num_questions; j++) {
 			struct array_list *answers;
 
 			obj = array_list_get_idx(questions, j);
@@ -92,10 +91,10 @@ int main(int argc, char *argv[])
 			}
 			answers = json_object_get_array(obj2);
 
-			for (k = 0; k < 3; k++) {
+			for (uintptr_t k = 0; k < 3; k++) {
 				struct json_object *tmp =
 					array_list_get_idx(answers, k);
-				printf("Answer #%d: %s\n", k + 1,
+				printf("Answer #%" PRIuPTR ": %s\n", k + 1,
 						json_object_get_string(tmp));
 			}
 
@@ -105,7 +104,7 @@ int main(int argc, char *argv[])
 				printf("ERROR: invalid key: 'correct_answer'");
 				return 3;
 			}
-			printf("Correct answer: %u\n",
+			printf("Correct answer: %d\n",
 					json_object_get_int(obj2));
 
 			printf("\n");

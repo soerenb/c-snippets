@@ -1,6 +1,3 @@
-#ifndef __INTERFACE_H_
-#define __INTERFACE_H_
+#pragma once
 
 #define SERVER_SOCK_FILE	"./sock_srv"
-
-#endif

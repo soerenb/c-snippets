@@ -16,6 +16,7 @@
 
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -23,18 +24,12 @@
 #include <foo.h>
 #include "interface.h"
 
-#define BUFSIZE	256
-
 int main(void)
 {
 	int ret = 0;
-	int socket_fd;
 	struct sockaddr_un address;
-	int bytes_received, bytes_sent;
-	char *buf;
-	size_t buf_size;
 
-	socket_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+	int socket_fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (socket_fd < 0) {
 		perror("ERROR: unable to create socket");
 		return socket_fd;
@@ -53,13 +48,13 @@ int main(void)
 
 	while (1) {
 		printf("Enter message to transmit: ");
-		buf = foo_gets();
+		char *buf = foo_gets();
 		if (!buf) {
 			printf("ERROR: unable to create message\n");
 			ret = -1;
 			goto err_close;
 		}
-		buf_size = strlen(buf);
+		size_t buf_size = strlen(buf);
 
 		if (!strncmp("quit", buf, 4) || !strncmp("exit", buf, 4)) {
 			printf("bye\n");
@@ -68,22 +63,23 @@ int main(void)
 			goto err_close;
 		}
 
-		bytes_sent = write(socket_fd, buf, buf_size - 1);
+		intptr_t bytes_sent = write(socket_fd, buf, buf_size - 1);
 		if (bytes_sent < 0) {
 			perror("ERROR: unable to send data");
 			ret = bytes_sent;
 			goto err_close;
 		} else {
-			printf("CLIENT: sent %d bytes\n", bytes_sent);
+			printf("CLIENT: sent %" PRIdPTR " bytes\n", bytes_sent);
 		}
 
-		bytes_received = read(socket_fd, buf, buf_size - 1);
+		intptr_t bytes_received = read(socket_fd, buf, buf_size - 1);
 		if (bytes_received < 0) {
 			perror("ERROR: unable to receive data");
 			ret = bytes_received;
 			goto err_close;
 		} else {
-			printf("CLIENT: received %d bytes\n", bytes_received);
+			printf("CLIENT: received %" PRIdPTR " bytes\n",
+			       bytes_received);
 		}
 
 		buf[bytes_received] = '\0';

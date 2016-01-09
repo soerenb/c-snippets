@@ -12,6 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdint.h>
 
@@ -50,9 +51,9 @@ int main(int argc, char **argv)
 
 	my_union.int32 = 0xdeadbeef;
 
-	printf("int32: %#x\n", my_union.int32);
-	printf("int16: %#x\n", my_union.int16);
-	printf("int8 : %#x\n", my_union.int8);
+	printf("int32: %#" PRIx32 "\n", my_union.int32);
+	printf("int16: %#" PRIx16 "\n", my_union.int16);
+	printf("int8 : %#" PRIx8 "\n", my_union.int8);
 
 	/* Bar tests */
 	/* Accessing serialized bytes and/or bits */

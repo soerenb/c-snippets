@@ -13,14 +13,16 @@
  * GNU General Public License for more details.
  */
 
+#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <foo.h>
 
-static unsigned int cb_shift(unsigned int n)
+static uintptr_t cb_shift(uintptr_t n)
 {
-	unsigned int ret = 0;
+	uintptr_t ret = 0;
 
 	while (n) {
 		ret += n & 1;
@@ -30,9 +32,9 @@ static unsigned int cb_shift(unsigned int n)
 	return ret;
 }
 
-static unsigned int cb_sub(unsigned int n)
+static uintptr_t cb_sub(uintptr_t n)
 {
-	unsigned int ret = 0;
+	uintptr_t ret = 0;
 
 	while (n) {
 		ret++;
@@ -42,14 +44,14 @@ static unsigned int cb_sub(unsigned int n)
 	return ret;
 }
 
-static unsigned int cb_gcc(unsigned int n)
+static uintptr_t cb_gcc(uintptr_t n)
 {
 	return __builtin_popcount(n);
 }
 
-static unsigned int cb_asm(unsigned int n)
+static uintptr_t cb_asm(uintptr_t n)
 {
-	unsigned int ret;
+	uintptr_t ret;
 
 	__asm__ volatile (
 			"popcnt	%0, %1"		/* intel dialect!! */
@@ -61,7 +63,7 @@ static unsigned int cb_asm(unsigned int n)
 	return ret;
 }
 
-static unsigned int (* const cb_func[])(unsigned int) = {
+static uintptr_t (* const cb_func[])(uintptr_t) = {
 	cb_shift,
 	cb_sub,
 	cb_gcc,
@@ -71,10 +73,9 @@ static unsigned int (* const cb_func[])(unsigned int) = {
 int main(int argc, char *argv[])
 {
 	while (1) {
-		int i;
 		char *input;
-		unsigned int num;
-		unsigned int result[ARRAY_SIZE(cb_func)];
+		uintptr_t num;
+		uintptr_t result[ARRAY_SIZE(cb_func)];
 
 		printf("enter number (q to exit): ");
 		input = foo_gets();
@@ -92,22 +93,21 @@ int main(int argc, char *argv[])
 			printf("WARNING: strtol conversion out of range.\n");
 		free(input);
 
-		for (i = 0; i < ARRAY_SIZE(cb_func); i++)
+		for (size_t i = 0; i < ARRAY_SIZE(cb_func); i++)
 			result[i] = cb_func[i](num);
 
-		for (i = 1; i < ARRAY_SIZE(cb_func); i++) {
+		for (size_t i = 1; i < ARRAY_SIZE(cb_func); i++) {
 			if (result[i] != result[i - 1]) {
-				int j;
 				printf("ERROR: results don't match\n");
-				printf("  %#x: ", num);
-				for (j = 0; j < ARRAY_SIZE(cb_func); j++)
-					printf("%u\t", result[j]);
+				printf("  %#" PRIxPTR ": ", num);
+				for (size_t j = 0; j < ARRAY_SIZE(cb_func); j++)
+					printf("%" PRIuPTR "\t", result[j]);
 				printf("\n");
 
 				return -1;
 			}
 		}
 
-		printf("  %#x: %u\n\n", num, result[0]);
+		printf("  %#" PRIxPTR ": %" PRIuPTR "\n\n", num, result[0]);
 	}
 }

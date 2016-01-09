@@ -16,6 +16,7 @@
 
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include <signal.h>
 #include <string.h>
@@ -34,27 +35,27 @@
 static void *echo_srv(void *arg)
 {
 	int fd = (int)((long long)arg);
-	int bytes_received, bytes_sent;
 	char buf[BUFSIZE];
 
 	while (1) {
-		bytes_received = read(fd, &buf, BUFSIZE);
+		intptr_t bytes_received = read(fd, &buf, BUFSIZE);
 		if (bytes_received < 0) {
 			perror("ERROR: unable to receive data");
 			continue;
 		} else {
-			printf("SERVER: received %d bytes\n", bytes_received);
+			printf("SERVER: received %" PRIdPTR " bytes\n",
+			       bytes_received);
 		}
 
 		errno = 0;
-		bytes_sent = write(fd, buf, bytes_received);
+		intptr_t bytes_sent = write(fd, buf, bytes_received);
 		if (bytes_sent < 0) {
 			perror("ERROR: unable to send data");
 			if (errno == EPIPE)
 				break;
 
 		} else {
-			printf("SERVER: sent %d bytes\n", bytes_sent);
+			printf("SERVER: sent %" PRIdPTR " bytes\n", bytes_sent);
 		}
 	}
 
@@ -68,7 +69,6 @@ int main(void)
 	int ret;
 	pthread_t thread;
 	pthread_attr_t thread_attr;
-	int socket_fd, connection_fd;
 	struct sockaddr_un address;
 	socklen_t address_length = sizeof(struct sockaddr_un);
 
@@ -76,7 +76,7 @@ int main(void)
 	signal(SIGPIPE, SIG_IGN);
 
 	/* create socket */
-	socket_fd = socket(AF_UNIX, SOCK_STREAM, 0);
+	int socket_fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (socket_fd < 0) {
 		perror("ERROR: unable to create socket\n");
 		return socket_fd;
@@ -103,7 +103,7 @@ int main(void)
 		goto err_unlink;
 	}
 
-	connection_fd = accept(socket_fd, (struct sockaddr *)&address,
+	int connection_fd = accept(socket_fd, (struct sockaddr *)&address,
 			&address_length);
 	if (connection_fd < 0) {
 		perror("ERROR: accept failed");
