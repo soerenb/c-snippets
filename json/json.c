@@ -14,10 +14,11 @@
  */
 
 #include <stdio.h>
-#include <json/json.h>
+#include <json-c/json.h>
 
 int main(int argc, char *argv[])
 {
+	json_bool ret;
 	unsigned int i, num_locations;
 	struct array_list *locations;
 	struct json_object *obj;
@@ -28,10 +29,18 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	obj = json_object_object_get(root, "name");
+	ret = json_object_object_get_ex(root, "name", &obj);
+	if (!ret) {
+		printf("ERROR: invalid key: 'name'");
+		return 3;
+	}
 	printf("%s\n", json_object_get_string(obj));
 
-	obj = json_object_object_get(root, "location");
+	ret = json_object_object_get_ex(root, "location", &obj);
+	if (!ret) {
+		printf("ERROR: invalid key: 'location'");
+		return 3;
+	}
 	num_locations = json_object_array_length(obj);
 	printf("Number of locations: %u\n", num_locations);
 
@@ -44,11 +53,19 @@ int main(int argc, char *argv[])
 		struct array_list *questions;
 
 		obj = array_list_get_idx(locations, i);
-		obj2 = json_object_object_get(obj, "name");
+		ret = json_object_object_get_ex(obj, "name", &obj2);
+		if (!ret) {
+			printf("ERROR: invalid key: 'name'");
+			return 3;
+		}
 		printf("Current location: %s\n",
 				json_object_get_string(obj2));
 
-		obj = json_object_object_get(obj, "question");
+		ret = json_object_object_get_ex(obj, "question", &obj);
+		if (!ret) {
+			printf("ERROR: invalid key: 'question'");
+			return 3;
+		}
 		num_questions = json_object_array_length(obj);
 		printf("Number of questions for location '%s': %u\n",
 				json_object_get_string(obj2), num_questions);
@@ -61,10 +78,18 @@ int main(int argc, char *argv[])
 			struct array_list *answers;
 
 			obj = array_list_get_idx(questions, j);
-			obj2 = json_object_object_get(obj, "question");
+			ret = json_object_object_get_ex(obj, "question", &obj2);
+			if (!ret) {
+				printf("ERROR: invalid key: 'question'");
+				return 3;
+			}
 			printf("Question: %s\n", json_object_get_string(obj2));
 
-			obj2 = json_object_object_get(obj, "answer");
+			ret = json_object_object_get_ex(obj, "answer", &obj2);
+			if (!ret) {
+				printf("ERROR: invalid key: 'answer'");
+				return 3;
+			}
 			answers = json_object_get_array(obj2);
 
 			for (k = 0; k < 3; k++) {
@@ -74,7 +99,12 @@ int main(int argc, char *argv[])
 						json_object_get_string(tmp));
 			}
 
-			obj2 = json_object_object_get(obj, "correct_answer");
+			ret = json_object_object_get_ex(obj, "correct_answer",
+							&obj2);
+			if (!ret) {
+				printf("ERROR: invalid key: 'correct_answer'");
+				return 3;
+			}
 			printf("Correct answer: %u\n",
 					json_object_get_int(obj2));
 
