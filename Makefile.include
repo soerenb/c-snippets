@@ -92,7 +92,7 @@ ${BUILDDIR}%.s: ${SRCDIR}%.c | ${BUILDDIR}
 	@echo "$(${quiet}cc_c_s)"
 	@${call cc_c_s}
 
-${BUILDDIR}%.elf: ${BUILDDIR}%.o ${OBJECTS}
+${TARGET_ELF}: ${OBJECTS}
 	@echo "$(${quiet}ld_o_elf)"
 	@${call ld_o_elf}
 
