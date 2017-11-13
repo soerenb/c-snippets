@@ -1,7 +1,8 @@
 CC = gcc
 LD = ${CC}
-CFLAGS = -Wall -O3 -march=native -masm=intel -I../libfoo/include
+CFLAGS = -Wall -O3 -I../libfoo/include
 LDFLAGS = ${CFLAGS} -L../libfoo/lib
+CFLAGS += -masm=intel
 LDLIBS = -lfoo
 
 SOURCES = popcount.c
