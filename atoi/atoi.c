@@ -40,8 +40,9 @@ static int my_atoi(const char *s)
 		s++;
 	}
 
-	while (*s != '\0' && *s != ' ' && *s >= '0' && *s <= '9')
+	while (*s >= '0' && *s <= '9') {
 		ret = ret * 10 + *s++ - '0';
+	}
 
 	if (neg)
 		ret *= -1;
