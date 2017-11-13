@@ -53,8 +53,8 @@ static uintptr_t cb_asm(uintptr_t n)
 {
 	uintptr_t ret;
 
-	__asm__ volatile (
-			"popcnt	%0, %1"		/* intel dialect!! */
+	__asm__ volatile(
+			"popcnt	%1, %0"		/* at&t dialect!! */
 			: "=r"(ret)
 			: "r"(n)
 			: /* no clobber */
