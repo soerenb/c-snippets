@@ -36,6 +36,8 @@ static int my_atoi(const char *s)
 	if (*s == '-') {
 		neg = true;
 		s++;
+	} else if (*s == '+') {
+		s++;
 	}
 
 	while (*s != '\0' && *s != ' ' && *s >= '0' && *s <= '9')
