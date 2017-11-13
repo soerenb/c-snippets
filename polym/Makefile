@@ -3,7 +3,7 @@ CXX = g++
 LD = ${CXX}
 
 CFLAGS = -Wall -O3 -march=native
-CXXFLAGS = ${CFLAGS}
+CXXFLAGS = ${CFLAGS} -std=c++11
 LDFLAGS = ${CFLAGS}
 
 SOURCES = polym.cpp
