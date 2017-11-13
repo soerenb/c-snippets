@@ -50,30 +50,37 @@ static int my_atoi(const char *s)
 	return ret;
 }
 
+static const char *test_pattern[] = {
+	"0",
+	"4",
+	"-5",
+	"---13",
+	"+++1298",
+	"      -123",
+	"      +94",
+	"			42",
+	"\n-234",
+	"0x20",
+	"0000666",
+	"-987 654",
+	"123x456",
+};
+
 int main(int argc, char *argv[])
 {
-	intptr_t num, ref;
-	char *num_str;
+	size_t errors = 0;
 
-	if (argc > 1) {
-		num_str = argv[1];
-	} else {
-		size_t len;
+	for (size_t i = 0; i < ARRAY_SIZE(test_pattern); i++) {
+		const char *num_str = test_pattern[i];
+		int ref = atoi(num_str);
+		int num = my_atoi(num_str);
 
-		num_str = foo_gets();
-		len = strlen(num_str);
-		if (num_str[len - 1] == '\n')
-			num_str[len - 1] = '\0';
+		if (num != ref) {
+			errors++;
+			fprintf(stderr, "ERROR: mismatch: in:%s, out:%d, ref:%d\n",
+				num_str, num, ref);
+		}
 	}
 
-	num = my_atoi(num_str);
-	ref = atoi(num_str);
-	if (num != ref)
-		fprintf(stderr, "ERROR: mismatch: in:%s, out:%" PRIdPTR ", ref:%" PRIdPTR "\n",
-			num_str, num, ref);
-	else
-		printf("in:%s, out:%" PRIdPTR ", ref:%" PRIdPTR "\n",
-		       num_str, num, ref);
-
-	return 0;
+	return errors;
 }
