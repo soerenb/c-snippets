@@ -498,7 +498,7 @@ int main(int argc, const char *argv[])
 		goto fail;
 
 	while (world->num_life_cells) {
-		printw("Iteration #%" PRIuMAX " Life Cells: %" PRIuMAX "",
+		printw("Iteration #%" PRIuMAX " Life Cells: %" PRIuMAX "\n",
 		       world->iteration++, world->num_life_cells);
 
 		simulate_step(world);
