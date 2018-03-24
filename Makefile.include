@@ -13,7 +13,18 @@ SIZE ?= size
 STRIP ?= strip
 CFLAGS := -D_FORTIFY_SOURCE=2 -fstack-protector-strong -flto -fpie -fdiagnostics-color=auto ${CFLAGS}
 CXXFLAGS := -D_FORTIFY_SOURCE=2 -fstack-protector-strong -flto -fpie -fdiagnostics-color=auto ${CXXFLAGS}
-LDFLAGS := -pie -flto -Wl,-z,relro,-z,now ${CFLAGS} ${LDFLAGS}
+LDFLAGS := -flto ${CFLAGS} ${LDFLAGS}
+
+# OS-specific settings
+ifneq (${OS},Windows_NT)
+    UNAME_S := $(shell uname -s)
+    ifeq (${UNAME_S},Linux)
+        LDFLAGS += -pie -Wl,-z,relro,-z,now
+    endif
+    ifeq (${UNAME_S},Darwin)
+        LDFLAGS += -Wl,-pie
+    endif
+endif
 
 # Determine if project is written in c or c++ by looking at the suffix of the
 # main source file
