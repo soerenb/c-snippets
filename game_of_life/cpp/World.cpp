@@ -147,10 +147,7 @@ uintmax_t World::_edit(void)
 	bool edit = true;
 	uintmax_t life_cells = 0;
 	/* setup curses for editing */
-	int tout = stdscr->_delay;    /* store current timeout */
 	int visibility = curs_set(2); /* cursor visiblity, 2 = very visible */
-
-	timeout(-1);
 
 	printw(
 	    "World Editor: User arrow keys to move cursor, space to toggle cell state, q to exit editor mode.\n");
@@ -225,7 +222,6 @@ uintmax_t World::_edit(void)
 
 	/* restore curses simulation settings */
 	curs_set(visibility);
-	timeout(tout);
 	erase();
 
 	return life_cells;

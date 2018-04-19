@@ -164,10 +164,7 @@ static uintmax_t edit_world(struct world *w)
 	bool edit = true;
 	uintmax_t life_cells = 0;
 	/* setup curses for editing */
-	int tout = stdscr->_delay;	/* store current timeout */
 	int visibility = curs_set(2);	/* cursor visiblity, 2 = very visible */
-
-	timeout(-1);
 
 	printw("World Editor: User arrow keys to move cursor, space to toggle cell state, q to exit editor mode.\n");
 
@@ -237,7 +234,6 @@ static uintmax_t edit_world(struct world *w)
 
 	/* restore curses simulation settings */
 	curs_set(visibility);
-	timeout(tout);
 	erase();
 
 	return life_cells;
@@ -480,7 +476,6 @@ int main(int argc, const char *argv[])
 	init_pair(1, COLOR_RED, COLOR_BLACK);
 	init_pair(2, COLOR_YELLOW, COLOR_BLACK);
 	init_pair(3, COLOR_GREEN, COLOR_BLACK);
-	nodelay(stdscr, TRUE);
 	if (manual_step)
 		/* wait indefinitely for input in manual mode */
 		timeout(-1);		/* blocking read */
